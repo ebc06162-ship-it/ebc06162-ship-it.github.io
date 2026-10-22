@@ -1099,7 +1099,7 @@ document.querySelectorAll(".reveal").forEach(el => io.observe(el));
   if (!box) return;
   box.innerHTML = ACABAMENTOS.map(a => {
     const preco = a.acrescimo === null ? null : 5.60 + a.acrescimo;
-    return `<li><span class="nm">${a.nome}</span><span class="vl">${preco === null ? "sob consulta" : "a partir de " + brl(preco)}</span></li>`;
+    return `<li><span class="nm">${a.nome}</span><span class="vl">${preco === null ? "a combinar" : "a partir de " + brl(preco)}</span></li>`;
   }).join("");
 })();
 
