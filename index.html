@@ -377,7 +377,8 @@ body{padding-bottom:72px}
           <select id="acabamento">
             <option value="cetim01">Crepom encerado com fita de cetim n.01 (7 mm)</option>
             <option value="cetim02">Crepom encerado com fita de cetim n.02 (10 mm)</option>
-            <option value="rami">Crepom encerado com cordão de rami</option>
+            <option value="rami1">Crepom encerado com cordão de rami simples (1 cordão)</option>
+            <option value="rami2">Crepom encerado com cordão de rami duplo (2 cordões)</option>
             <option value="frances">Papel francês com fita de cetim</option>
             <option value="metalico">Crepom italiano metálico</option>
             <option value="organza">Celofane com organza</option>
@@ -470,7 +471,7 @@ body{padding-bottom:72px}
 
     <!-- Embalagens / catálogo -->
     <details class="bloco">
-      <summary>Embalagens e catálogo de cores <span class="sum-hint">7 acabamentos</span></summary>
+      <summary>Embalagens e catálogo de cores <span class="sum-hint">8 acabamentos</span></summary>
       <div class="bloco-body">
         <p class="lead" style="font-size:15px">O papel e a fita não mudam o sabor, mas mudam o valor. Estes são os acabamentos da casa:</p>
         <ul class="lista-acabamentos" id="listaAcab"></ul>
@@ -675,7 +676,8 @@ const PRECOS = {
 const ACABAMENTOS = [
   { id: "cetim01",  nome: "Crepom encerado com fita de cetim n.01 (7 mm)", curto: "Cetim n.01 · 7 mm",  acrescimo: 0,    nota: "O acabamento mais pedido da casa." },
   { id: "cetim02",  nome: "Crepom encerado com fita de cetim n.02 (10 mm)", curto: "Cetim n.02 · 10 mm", acrescimo: 0.10, nota: "A fita mais larga, mesmo papel." },
-  { id: "rami",     nome: "Crepom encerado com cordão de rami",            curto: "Cordão de rami",     acrescimo: 0.40, nota: "Cordão torcido à mão, nó simples." },
+  { id: "rami1",    nome: "Crepom encerado com cordão de rami simples (1 cordão)", curto: "Rami simples",  acrescimo: 0.40, nota: "Um cordão, torcido à mão, nó simples." },
+  { id: "rami2",    nome: "Crepom encerado com cordão de rami duplo (2 cordões)",  curto: "Rami duplo",    acrescimo: 0.80, nota: "Dois cordões, laço mais cheio." },
   { id: "frances",  nome: "Papel francês com fita de cetim",               curto: "Papel francês",      acrescimo: 2.00, nota: "Cores e estampas especiais." },
   { id: "metalico", nome: "Crepom italiano metálico",                      curto: "Crepom metálico",    acrescimo: null, nota: "Sob consulta." },
   { id: "organza",  nome: "Celofane com organza",                          curto: "Celofane e organza", acrescimo: null, nota: "Sob consulta." },
