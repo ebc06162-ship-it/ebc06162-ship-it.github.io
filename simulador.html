@@ -608,6 +608,10 @@ body{padding-bottom:76px}
 .wiz-footer .base{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
   font-size:12.5px; color:var(--rose); border-top:1px solid var(--nude); padding-top:14px}
 
+/* passo 4 não usa a barra fixa: as ações estão no próprio resultado */
+.wiz-nav.escondida{display:none}
+.wiz-footer{padding-bottom:20px}
+
 </style>
 </head>
 <body class="wiz-body">
@@ -1173,7 +1177,7 @@ function validarPasso() {
   } else {
     avancar.disabled = false;
   }
-  avancar.textContent = estado.passo === 4 ? "Chamar no WhatsApp" : "Continuar";
+  avancar.textContent = "Continuar";
 }
 
 function irPara(passo) {
@@ -1186,6 +1190,8 @@ function irPara(passo) {
   });
   el("wizBar").style.width = ((passo - 1) / 3 * 100) + "%";
   el("btnVoltar").style.visibility = passo === 1 ? "hidden" : "visible";
+  // no passo 4 a barra fixa some: as ações já estão no cartão do resultado
+  document.querySelector(".wiz-nav").classList.toggle("escondida", passo === 4);
 
   if (passo === 2) { renderChips(); renderLinhas(); atualizarRegua(); }
   if (passo === 3) renderAcabamentos();
@@ -1242,11 +1248,7 @@ function ligarControles() {
   };
 
   el("btnContinuar").onclick = () => {
-    if (estado.passo < 4) { irPara(estado.passo + 1); return; }
-    // passo 4: o botão principal chama o WhatsApp
-    const c = calcular();
-    registrarSimulacao(c, "fechar");
-    window.open(linkWhats(mensagemFechar(c)), "_blank");
+    if (estado.passo < 4) irPara(estado.passo + 1);
   };
 
   el("btnVoltar").onclick = () => { if (estado.passo > 1) irPara(estado.passo - 1); };
