@@ -412,26 +412,22 @@ body{padding-bottom:76px}
 .chip .pr{display:block; font-family:var(--font-mono); font-variant-numeric:tabular-nums lining-nums;
   font-size:14px; font-weight:600; color:var(--gold-text); margin-top:4px}
 
-/* comparação das duas embalagens */
+/* comparação das duas embalagens, com foto real */
 .acab-compare{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px}
 .acab-card{padding:0; border:2px solid var(--nude-strong); border-radius:12px; background:#fff;
   cursor:pointer; overflow:hidden; text-align:left; font-family:var(--font-body);
   transition:border-color 150ms var(--ease)}
 .acab-card:hover{border-color:var(--gold)}
 .acab-card.on{border-color:var(--gold-text); box-shadow:0 0 0 1px var(--gold-text) inset}
-.visual{background:linear-gradient(150deg,#f7f2f0,#efdfd8); padding:18px 12px;
-  display:flex; flex-direction:column; align-items:center; gap:9px}
-/* a fita desenhada em escala: 7 mm e 10 mm */
-.papel{width:100%; max-width:110px; height:74px; border-radius:7px;
-  background:linear-gradient(160deg,#fdfbf7,#f4ece2); border:1px solid #e6d8c8;
-  display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(120,90,50,.1)}
-.fita{width:100%; border-radius:2px;
-  background:linear-gradient(180deg,#d9bd92,#c9a878 45%,#b8935f);
-  box-shadow:0 1px 2px rgba(110,80,40,.22)}
-.fita.n01{height:14px}
-.fita.n02{height:20px}
-.medida{font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:12px;
-  font-weight:600; color:var(--rose-brown); letter-spacing:.06em}
+.visual{background:#fbf9f6; padding:0; display:block; position:relative; overflow:hidden}
+/* a foto é recortada quadrada e ampliada no laço: é ali que a largura da
+   fita aparece. As duas fotos foram normalizadas no mesmo enquadramento. */
+.visual img{width:100%; height:auto; aspect-ratio:1/1; object-fit:cover;
+  object-position:center 46%; display:block}
+.medida{position:absolute; left:9px; bottom:9px; background:rgba(255,255,255,.93);
+  border:1px solid var(--nude-strong); border-radius:999px; padding:4px 10px;
+  font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:12px;
+  font-weight:600; color:var(--espresso); letter-spacing:.04em}
 .acab-info{padding:13px 13px 15px}
 .acab-info .nm{font-size:16px; font-weight:700; color:var(--espresso); line-height:1.25}
 .acab-info .pr{font-family:var(--font-mono); font-variant-numeric:tabular-nums lining-nums;
@@ -667,7 +663,7 @@ body{padding-bottom:76px}
       <summary>E se eu ainda não sei a quantidade? <span class="sum-hint">a gente calcula</span></summary>
       <div class="bloco-body">
         <div class="faq">
-          <p>A conta da casa é de 2 bem-casados por convidado. Num casamento de 120 pessoas, dá 240 unidades. No simulador você só diz quantos convidados espera e a gente faz a conta.</p>
+          <p>A conta da casa é de 2,5 bem-casados por convidado. Num casamento de 120 pessoas, dá 300 unidades. No simulador você só diz quantos convidados espera e a gente faz a conta.</p>
           <p><a href="simulador.html">Abrir o simulador</a></p>
         </div>
       </div>
