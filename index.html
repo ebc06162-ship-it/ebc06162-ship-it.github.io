@@ -50,6 +50,8 @@
 }
 
 *{box-sizing:border-box}
+/* o atributo hidden precisa vencer o display dos componentes (.btn, .chip...) */
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{
   margin:0; background:var(--page); color:var(--espresso);
@@ -496,6 +498,118 @@ body{padding-bottom:76px}
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .barra-sim .btn{flex:0 0 auto; padding:12px 20px; min-height:46px}
 .barra-sim .btn[aria-disabled=true]{opacity:.45; pointer-events:none}
+
+/* ============================================================
+   SIMULADOR EM 4 PASSOS (substitui a página de rolagem única)
+   ============================================================ */
+
+.wiz{max-width:720px; margin:0 auto; padding:22px 20px 96px}
+@media(min-width:760px){ .wiz{max-width:760px; padding:30px 32px 110px} }
+
+/* trilha de etapas */
+.wiz-head{margin-bottom:26px}
+.wiz-dots{display:flex; gap:6px; list-style:none; margin:0 0 12px; padding:0}
+.wiz-dots li{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;
+  font-size:11.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  color:#9c8172; text-align:center; line-height:1.2}
+.wiz-dots li .n{width:26px; height:26px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; background:var(--champagne); border:1.5px solid var(--nude-strong);
+  font-family:var(--font-mono); font-size:13px; font-weight:600; color:var(--rose-brown)}
+.wiz-dots li.on{color:var(--gold-text)}
+.wiz-dots li.on .n{background:var(--gold-text); border-color:var(--gold-text); color:#fff}
+.wiz-dots li.done .n{background:#fff; border-color:var(--gold-text); color:var(--gold-text)}
+.wiz-dots li.done .n::before{content:"✓"; font-size:14px}
+.wiz-dots li.done .n span{display:none}
+.wiz-bar{height:3px; background:var(--nude); border-radius:2px; overflow:hidden}
+.wiz-bar span{display:block; height:100%; width:0; background:var(--gold);
+  border-radius:2px; transition:width 320ms var(--ease)}
+
+/* a tela */
+.tela{animation:entra 260ms var(--ease)}
+@keyframes entra{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+@media(prefers-reduced-motion:reduce){ .tela{animation:none} }
+.step-eyebrow{font-family:var(--font-mono); font-size:12.5px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--gold-text)}
+.tela h1{font-size:clamp(27px,5.2vw,36px); margin:9px 0 0}
+.lead-tela{font-size:16.5px; color:var(--rose-brown); line-height:1.65; margin-top:12px; max-width:52ch}
+
+/* passo 1: quantidade (reaproveita .seg, .qty-row, .quick-qty) */
+.tela .seg{margin-top:22px}
+.tela .seg-body{margin-top:20px}
+.tela label{display:block; font-size:15px; font-weight:700; color:var(--rose-brown); margin-bottom:9px}
+
+/* passo 2: sabores */
+.chips.multi{grid-template-columns:repeat(2,1fr); gap:9px; margin-top:22px}
+@media(min-width:620px){ .chips.multi{grid-template-columns:repeat(3,1fr)} }
+.chips.multi .chip{display:flex; flex-direction:column; gap:3px; position:relative;
+  padding:14px 13px 13px 34px}
+.chips.multi .chip .tick{position:absolute; left:11px; top:14px; width:16px; height:16px;
+  border-radius:50%; border:1.5px solid var(--nude-strong); display:flex; align-items:center;
+  justify-content:center; font-size:11px; font-weight:700; color:var(--rose-brown);
+  background:#fff; line-height:1}
+.chips.multi .chip.on .tick{background:var(--gold-text); border-color:var(--gold-text); color:#fff}
+
+.sabores-lista{margin-top:22px; display:flex; flex-direction:column; gap:12px}
+.vazio{background:var(--champagne); border:1.5px dashed var(--nude-strong); border-radius:11px;
+  padding:20px; text-align:center; font-size:15.5px; color:var(--rose-brown); margin:0; line-height:1.55}
+.sabor-linha{background:var(--ivory); border:1px solid var(--nude); border-radius:11px; padding:15px 16px}
+.sl-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:11px}
+.sl-nome{font-size:17px; font-weight:700; color:var(--espresso)}
+.sl-preco{font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:13.5px;
+  color:var(--gold-text); font-weight:600; white-space:nowrap}
+.sabor-linha .qty-row{gap:7px}
+.sabor-linha .sl-qtd{max-width:104px; text-align:center; font-weight:600; font-size:17px}
+.sabor-linha .qty-btn{width:46px; height:46px; font-size:20px}
+.sl-add{border:1.5px dashed var(--gold); background:#fff; border-radius:9px; padding:0 13px;
+  height:46px; font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:13.5px;
+  font-weight:600; color:var(--gold-text); cursor:pointer; flex:1; min-width:0}
+.sl-add:hover{background:var(--champagne)}
+.sl-foot{display:flex; justify-content:space-between; gap:10px; margin-top:9px;
+  font-size:13.5px; color:var(--rose); line-height:1.4}
+.sl-foot .mono{color:var(--espresso); font-weight:600; white-space:nowrap}
+
+/* régua: quanto já foi distribuído */
+.regua{margin-top:18px; background:var(--champagne); border:1.5px solid #e3cbb6;
+  border-radius:12px; padding:16px 18px; transition:border-color 200ms var(--ease), background 200ms var(--ease)}
+.regua.ok{background:#f2f6ee; border-color:#bed3ac}
+.regua.acima{background:#fdf1ec; border-color:#e6c3b4}
+.regua-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+#reguaTexto{font-size:15.5px; font-weight:700; color:var(--espresso)}
+.regua-num{font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:14px;
+  font-weight:600; color:var(--gold-text)}
+.regua.ok .regua-num{color:#4c7a34}
+.regua.acima .regua-num{color:var(--wine)}
+.regua-bar{height:7px; background:#fff; border-radius:4px; overflow:hidden; margin-top:10px;
+  border:1px solid var(--nude)}
+.regua-bar span{display:block; height:100%; width:0; background:var(--gold);
+  transition:width 260ms var(--ease), background 200ms var(--ease)}
+.regua.ok .regua-bar span{background:#6f9a52}
+.regua.acima .regua-bar span{background:var(--wine)}
+.regua-acoes{display:flex; gap:8px; flex-wrap:wrap; margin-top:13px}
+.regua-acoes .btn-sm{padding:9px 15px; font-size:14.5px; min-height:42px}
+.regua-aviso{font-size:14px; color:var(--wine); line-height:1.5; margin:11px 0 0}
+
+/* passo 4: linhas de sabor no resultado */
+.row-sabor .k small{display:block; font-size:13px; color:var(--rose); margin-top:3px}
+.row-totais{margin-top:4px; padding-top:13px; border-top:1.5px solid var(--nude-strong)}
+.result-sim .btn-row .btn{width:100%}
+
+/* navegação fixa */
+.wiz-nav{position:fixed; left:0; right:0; bottom:0; z-index:50; display:flex; gap:10px;
+  padding:11px 18px calc(11px + env(safe-area-inset-bottom));
+  background:rgba(250,248,245,.98); backdrop-filter:blur(10px);
+  border-top:1.5px solid var(--nude-strong); box-shadow:0 -2px 14px rgba(120,90,50,.10)}
+@media(min-width:760px){ .wiz-nav{position:static; max-width:760px; margin:0 auto;
+  background:none; border:0; box-shadow:none; padding:0 32px 20px} }
+.wiz-nav .btn{flex:1; min-height:52px; font-size:16.5px}
+.wiz-nav .btn-outline{max-width:132px}
+@media(min-width:760px){ .wiz-nav{justify-content:flex-end} .wiz-nav .btn{flex:0 0 auto; min-width:180px} }
+.wiz-nav .btn[disabled]{opacity:.42; cursor:not-allowed}
+
+.wiz-footer{padding-bottom:86px}
+@media(min-width:760px){ .wiz-footer{padding-bottom:20px} }
+.wiz-footer .base{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  font-size:12.5px; color:var(--rose); border-top:1px solid var(--nude); padding-top:14px}
 
 </style>
 </head>
