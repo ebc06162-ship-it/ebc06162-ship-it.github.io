@@ -602,6 +602,21 @@ body{padding-bottom:76px}
 .wiz-nav.escondida{display:none}
 .wiz-footer{padding-bottom:20px}
 
+/* divisor entre a escolha dos sabores e as quantidades */
+.divisor{display:flex; flex-direction:column; gap:2px; margin:24px 0 12px;
+  padding-top:18px; border-top:1.5px solid var(--nude)}
+.divisor-lb{font-family:var(--font-display); font-size:19px; font-weight:500; color:var(--gold-text)}
+.divisor-sub{font-size:14px; color:var(--rose); line-height:1.4}
+
+/* "ver todos os sabores" */
+.btn-todos{display:block; width:100%; margin-top:9px; padding:12px; border-radius:9px;
+  border:1.5px dashed var(--nude-strong); background:transparent; cursor:pointer;
+  font-family:var(--font-body); font-size:15px; font-weight:700; color:var(--gold-text)}
+.btn-todos:hover{background:var(--champagne); border-color:var(--gold)}
+
+/* a lista de quantidades só existe quando há sabores escolhidos */
+.sabores-lista{margin-top:0}
+
 </style>
 </head>
 <body>

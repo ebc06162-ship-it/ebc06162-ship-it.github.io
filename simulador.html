@@ -599,6 +599,21 @@ body{padding-bottom:76px}
 .wiz-nav.escondida{display:none}
 .wiz-footer{padding-bottom:20px}
 
+/* divisor entre a escolha dos sabores e as quantidades */
+.divisor{display:flex; flex-direction:column; gap:2px; margin:24px 0 12px;
+  padding-top:18px; border-top:1.5px solid var(--nude)}
+.divisor-lb{font-family:var(--font-display); font-size:19px; font-weight:500; color:var(--gold-text)}
+.divisor-sub{font-size:14px; color:var(--rose); line-height:1.4}
+
+/* "ver todos os sabores" */
+.btn-todos{display:block; width:100%; margin-top:9px; padding:12px; border-radius:9px;
+  border:1.5px dashed var(--nude-strong); background:transparent; cursor:pointer;
+  font-family:var(--font-body); font-size:15px; font-weight:700; color:var(--gold-text)}
+.btn-todos:hover{background:var(--champagne); border-color:var(--gold)}
+
+/* a lista de quantidades só existe quando há sabores escolhidos */
+.sabores-lista{margin-top:0}
+
 </style>
 </head>
 <body class="wiz-body">
@@ -675,22 +690,31 @@ body{padding-bottom:76px}
   <!-- ============ PASSO 2 · SABORES ============ -->
   <section class="tela" data-passo="2" hidden>
     <span class="step-eyebrow">Passo 2 de 4</span>
-    <h1>Quanto de cada sabor?</h1>
-    <p class="lead-tela">Escreva a quantidade de cada sabor que você quer. Pode ser um só ou vários — o que importa é somar 500.</p>
+    <h1>Quais sabores você quer?</h1>
+    <p class="lead-tela">Escolha um ou mais. A quantidade é dividida igualmente entre eles, e você ajusta como preferir.</p>
 
-    <div class="sabores-lista" id="listaSabores"></div>
+    <div class="chips multi" id="chipsSabor"></div>
+    <button type="button" class="btn-todos" id="btnTodos" hidden>Ver todos os sabores</button>
 
-    <div class="regua" id="reguaCard">
-      <div class="regua-top">
-        <span id="reguaTexto">0 de 0</span>
-        <span class="regua-num" id="reguaNum">—</span>
+    <div id="blocoQuantidades" hidden>
+      <div class="divisor">
+        <span class="divisor-lb">Quanto de cada sabor</span>
+        <span class="divisor-sub">Já dividido igualmente. Pode editar.</span>
       </div>
-      <div class="regua-bar"><span id="reguaBar"></span></div>
-      <div class="regua-acoes">
-        <button type="button" class="btn btn-outline btn-sm" id="btnCompletar" hidden>Completar o que falta</button>
-        <button type="button" class="btn btn-outline btn-sm" id="btnLimpar">Limpar</button>
+      <div class="sabores-lista" id="listaSabores"></div>
+
+      <div class="regua" id="reguaCard">
+        <div class="regua-top">
+          <span id="reguaTexto">0 de 0</span>
+          <span class="regua-num" id="reguaNum">—</span>
+        </div>
+        <div class="regua-bar"><span id="reguaBar"></span></div>
+        <div class="regua-acoes">
+          <button type="button" class="btn btn-outline btn-sm" id="btnRedividir">Dividir igualmente</button>
+          <button type="button" class="btn btn-outline btn-sm" id="btnCompletar" hidden>Completar o que falta</button>
+        </div>
+        <p class="regua-aviso" id="reguaAviso" hidden></p>
       </div>
-      <p class="regua-aviso" id="reguaAviso" hidden></p>
     </div>
   </section>
 
@@ -884,12 +908,64 @@ function parcelas(valor, teto) {
 }
 
 /* ---------------- passo 2: sabores ----------------
-   Todos os sabores aparecem de uma vez, cada um com o seu campo de
-   quantidade. Um campo só, uma decisão só: digitar. Sem chip para marcar
-   antes, que era o que confundia (Mara, 22/10).                          */
-function renderLinhas() {
+   A cliente primeiro ESCOLHE os sabores (chips) e só então a lista de
+   quantidades aparece, já dividida igualmente entre eles — decisão da Mara
+   em 22/10. A lista curta mostra os mais pedidos; o resto fica em "ver todos". */
+const SABORES_DESTAQUE = ["Doce de leite", "Limão siciliano", "Churros", "Chocolate belga"];
+let mostrarTodos = false;
+
+function selecionados() {
+  return ORDEM.filter(s => s in estado.sabores);
+}
+
+function renderChips() {
+  const box = el("chipsSabor");
+  const lista = mostrarTodos ? ORDEM : SABORES_DESTAQUE;
+  box.innerHTML = lista.map(nome => {
+    const on = nome in estado.sabores;
+    return `<button type="button" class="chip${on ? " on" : ""}" data-sabor="${nome}"
+      aria-pressed="${on ? "true" : "false"}">
+      <span class="tick" aria-hidden="true">${on ? "✓" : "+"}</span>
+      <span class="nm">${nome}</span>
+      <span class="pr">R$ ${PRECOS[nome].toFixed(2).replace(".", ",")}</span>
+    </button>`;
+  }).join("");
+
+  box.querySelectorAll("[data-sabor]").forEach(b => {
+    b.onclick = () => {
+      const s = b.dataset.sabor;
+      if (s in estado.sabores) delete estado.sabores[s];
+      else estado.sabores[s] = 0;
+      // ao selecionar, divide o total igualmente entre os escolhidos
+      dividirIgualmente();
+      renderChips(); renderQuantidades(); atualizarRegua();
+    };
+  });
+
+  el("btnTodos").hidden = mostrarTodos;
+}
+
+/* divide o total do passo 1 entre os sabores escolhidos, deixando editar */
+function dividirIgualmente() {
+  const lista = selecionados();
+  if (!lista.length) return;
+  const alvo = totalPedido();
+  const base = Math.floor(alvo / lista.length / 5) * 5;   // múltiplo de 5
+  let sobra = alvo - base * lista.length;
+  lista.forEach((sabor, i) => {
+    let q = base;
+    if (i === 0) q += sobra;             // a diferença vai no primeiro
+    estado.sabores[sabor] = Math.max(0, q);
+  });
+}
+
+function renderQuantidades() {
+  const lista = selecionados();
+  el("blocoQuantidades").hidden = lista.length === 0;
+  if (!lista.length) return;
+
   const box = el("listaSabores");
-  box.innerHTML = ORDEM.map(sabor => {
+  box.innerHTML = lista.map(sabor => {
     const q = estado.sabores[sabor] || 0;
     const preco = PRECOS[sabor];
     const bonus = q > 0 ? bonusDe(q) : 0;
@@ -914,22 +990,27 @@ function renderLinhas() {
   box.querySelectorAll(".sabor-linha").forEach(linha => {
     const sabor = linha.dataset.linha;
     const input = linha.querySelector(".sl-qtd");
-    const set = (v) => {
-      const n = Math.max(0, Math.round(v / 5) * 5);
-      estado.sabores[sabor] = n;
-      const q = n, bonus = q > 0 ? bonusDe(q) : 0;
+    const pintar = () => {
+      const q = estado.sabores[sabor] || 0;
+      const bonus = q > 0 ? bonusDe(q) : 0;
       linha.classList.toggle("tem", q > 0);
       linha.querySelector(".sl-foot span").textContent = q > 0
         ? `+${num(bonus)} bônus · ${num(q + bonus)} no total` : "\u00a0";
       linha.querySelector(".sl-valor").textContent = q > 0 ? brl(q * PRECOS[sabor]) : "";
-      linha.querySelector(".sl-qtd").value = q || "";
-      atualizarRegua();
     };
-    input.oninput = () => { estado.sabores[sabor] = Math.max(0, parseInt(input.value, 10) || 0); atualizarRegua(); };
-    input.onchange = () => set(parseInt(input.value, 10) || 0);
-    input.onblur = () => set(parseInt(input.value, 10) || 0);
-    linha.querySelector(".sl-mais").onclick = () => set((estado.sabores[sabor] || 0) + 25);
-    linha.querySelector(".sl-menos").onclick = () => set(Math.max(0, (estado.sabores[sabor] || 0) - 25));
+    input.oninput = () => { estado.sabores[sabor] = Math.max(0, parseInt(input.value, 10) || 0); pintar(); atualizarRegua(); };
+    input.onblur = () => {
+      const n = Math.max(0, Math.round((parseInt(input.value, 10) || 0) / 5) * 5);
+      estado.sabores[sabor] = n; input.value = n || ""; pintar(); atualizarRegua();
+    };
+    linha.querySelector(".sl-mais").onclick = () => {
+      const n = (estado.sabores[sabor] || 0) + 25;
+      estado.sabores[sabor] = n; input.value = n; pintar(); atualizarRegua();
+    };
+    linha.querySelector(".sl-menos").onclick = () => {
+      const n = Math.max(0, (estado.sabores[sabor] || 0) - 25);
+      estado.sabores[sabor] = n; input.value = n || ""; pintar(); atualizarRegua();
+    };
   });
 }
 
@@ -1153,7 +1234,7 @@ function irPara(passo) {
   // no passo 4 a barra fixa some: as ações já estão no cartão do resultado
   document.querySelector(".wiz-nav").classList.toggle("escondida", passo === 4);
 
-  if (passo === 2) { renderLinhas(); atualizarRegua(); }
+  if (passo === 2) { renderChips(); renderQuantidades(); atualizarRegua(); }
   if (passo === 3) renderAcabamentos();
   if (passo === 4) renderResultado();
 
@@ -1186,19 +1267,23 @@ function ligarControles() {
     };
   });
 
-  el("btnLimpar").onclick = () => {
-    estado.sabores = {};
-    renderLinhas(); atualizarRegua();
+  el("btnRedividir").onclick = () => {
+    dividirIgualmente();
+    renderQuantidades(); atualizarRegua();
+  };
+
+  el("btnTodos").onclick = () => {
+    mostrarTodos = true;
+    renderChips();
   };
 
   el("btnCompletar").onclick = () => {
-    const lista = saboresEscolhidos();
+    const lista = selecionados();
     const falta = totalPedido() - totalDistribuido();
-    if (falta <= 0) return;
-    // completa no primeiro sabor que ela já escolheu; se não escolheu nenhum, no clássico
-    const alvo = lista.length ? lista[0].sabor : "Doce de leite";
+    if (falta <= 0 || !lista.length) return;
+    const alvo = lista[0];
     estado.sabores[alvo] = (estado.sabores[alvo] || 0) + falta;
-    renderLinhas(); atualizarRegua();
+    renderQuantidades(); atualizarRegua();
   };
 
   el("btnContinuar").onclick = () => {
@@ -1210,7 +1295,7 @@ function ligarControles() {
   el("btnRefazer").onclick = () => {
     estado.sabores = {};
     estado.acab = "cetim01";
-    renderLinhas();
+    mostrarTodos = false;
     irPara(1);
   };
 
