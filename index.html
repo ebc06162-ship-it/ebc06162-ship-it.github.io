@@ -538,35 +538,22 @@ body{padding-bottom:76px}
 .tela .seg-body{margin-top:20px}
 .tela label{display:block; font-size:15px; font-weight:700; color:var(--rose-brown); margin-bottom:9px}
 
-/* passo 2: sabores */
-.chips.multi{grid-template-columns:repeat(2,1fr); gap:9px; margin-top:22px}
-@media(min-width:620px){ .chips.multi{grid-template-columns:repeat(3,1fr)} }
-.chips.multi .chip{display:flex; flex-direction:column; gap:3px; position:relative;
-  padding:14px 13px 13px 34px}
-.chips.multi .chip .tick{position:absolute; left:11px; top:14px; width:16px; height:16px;
-  border-radius:50%; border:1.5px solid var(--nude-strong); display:flex; align-items:center;
-  justify-content:center; font-size:11px; font-weight:700; color:var(--rose-brown);
-  background:#fff; line-height:1}
-.chips.multi .chip.on .tick{background:var(--gold-text); border-color:var(--gold-text); color:#fff}
-
-.sabores-lista{margin-top:22px; display:flex; flex-direction:column; gap:12px}
-.vazio{background:var(--champagne); border:1.5px dashed var(--nude-strong); border-radius:11px;
-  padding:20px; text-align:center; font-size:15.5px; color:var(--rose-brown); margin:0; line-height:1.55}
-.sabor-linha{background:var(--ivory); border:1px solid var(--nude); border-radius:11px; padding:15px 16px}
-.sl-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:11px}
-.sl-nome{font-size:17px; font-weight:700; color:var(--espresso)}
-.sl-preco{font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:13.5px;
-  color:var(--gold-text); font-weight:600; white-space:nowrap}
-.sabor-linha .qty-row{gap:7px}
-.sabor-linha .sl-qtd{max-width:104px; text-align:center; font-weight:600; font-size:17px}
-.sabor-linha .qty-btn{width:46px; height:46px; font-size:20px}
-.sl-add{border:1.5px dashed var(--gold); background:#fff; border-radius:9px; padding:0 13px;
-  height:46px; font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:13.5px;
-  font-weight:600; color:var(--gold-text); cursor:pointer; flex:1; min-width:0}
-.sl-add:hover{background:var(--champagne)}
-.sl-foot{display:flex; justify-content:space-between; gap:10px; margin-top:9px;
-  font-size:13.5px; color:var(--rose); line-height:1.4}
-.sl-foot .mono{color:var(--espresso); font-weight:600; white-space:nowrap}
+/* passo 2: sabores — todos visíveis, cada um com seu campo */
+.sabores-lista{margin-top:20px; display:flex; flex-direction:column; gap:9px}
+.sabor-linha{background:var(--ivory); border:1.5px solid var(--nude); border-radius:11px;
+  padding:12px 14px; transition:border-color 160ms var(--ease), background 160ms var(--ease)}
+.sabor-linha.tem{border-color:#dcc39e; background:#fdfaf6}
+.sl-nome-linha{display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+.sl-nome{font-size:16.5px; font-weight:700; color:var(--espresso); line-height:1.25}
+.sl-preco{font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:13px;
+  color:var(--gold-text); font-weight:600; white-space:nowrap; flex:0 0 auto}
+.sl-controles{display:flex; align-items:center; gap:7px; margin-top:10px}
+.sl-controles .qty-btn{width:44px; height:44px; font-size:19px}
+.sl-qtd{flex:1; min-width:0; max-width:none; text-align:center; font-weight:600; font-size:17px;
+  padding:10px 8px; min-height:44px}
+.sabor-linha .sl-foot{display:flex; justify-content:space-between; gap:10px; margin-top:7px;
+  font-size:13px; color:var(--rose); line-height:1.35; min-height:18px}
+.sl-valor{color:var(--espresso); font-weight:600; white-space:nowrap}
 
 /* régua: quanto já foi distribuído */
 .regua{margin-top:18px; background:var(--champagne); border:1.5px solid #e3cbb6;
