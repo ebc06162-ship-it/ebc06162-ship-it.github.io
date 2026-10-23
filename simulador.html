@@ -694,7 +694,6 @@ body{padding-bottom:76px}
     <p class="lead-tela">Escolha um ou mais. A quantidade é dividida igualmente entre eles, e você ajusta como preferir.</p>
 
     <div class="chips multi" id="chipsSabor"></div>
-    <button type="button" class="btn-todos" id="btnTodos" hidden>Ver todos os sabores</button>
 
     <div id="blocoQuantidades" hidden>
       <div class="divisor">
@@ -911,8 +910,6 @@ function parcelas(valor, teto) {
    A cliente primeiro ESCOLHE os sabores (chips) e só então a lista de
    quantidades aparece, já dividida igualmente entre eles — decisão da Mara
    em 22/10. A lista curta mostra os mais pedidos; o resto fica em "ver todos". */
-const SABORES_DESTAQUE = ["Doce de leite", "Limão siciliano", "Churros", "Chocolate belga"];
-let mostrarTodos = false;
 
 function selecionados() {
   return ORDEM.filter(s => s in estado.sabores);
@@ -920,7 +917,7 @@ function selecionados() {
 
 function renderChips() {
   const box = el("chipsSabor");
-  const lista = mostrarTodos ? ORDEM : SABORES_DESTAQUE;
+  const lista = ORDEM;
   box.innerHTML = lista.map(nome => {
     const on = nome in estado.sabores;
     return `<button type="button" class="chip${on ? " on" : ""}" data-sabor="${nome}"
@@ -942,7 +939,6 @@ function renderChips() {
     };
   });
 
-  el("btnTodos").hidden = mostrarTodos;
 }
 
 /* divide o total do passo 1 entre os sabores escolhidos, deixando editar */
@@ -1213,8 +1209,9 @@ function validarPasso() {
   if (estado.passo === 1) {
     avancar.disabled = alvo < PEDIDO_MINIMO;
   } else if (estado.passo === 2) {
-    // só avança quando a distribuição fecha (nem falta, nem passa)
-    avancar.disabled = !(feito === alvo && alvo >= PEDIDO_MINIMO);
+    // avança quando a distribuição chega ao total. passar um pouco é uma
+    // escolha legítima dela (mudou de ideia sobre a quantidade), então não trava
+    avancar.disabled = !(feito >= alvo && alvo >= PEDIDO_MINIMO);
   } else {
     avancar.disabled = false;
   }
@@ -1272,10 +1269,6 @@ function ligarControles() {
     renderQuantidades(); atualizarRegua();
   };
 
-  el("btnTodos").onclick = () => {
-    mostrarTodos = true;
-    renderChips();
-  };
 
   el("btnCompletar").onclick = () => {
     const lista = selecionados();
@@ -1295,7 +1288,6 @@ function ligarControles() {
   el("btnRefazer").onclick = () => {
     estado.sabores = {};
     estado.acab = "cetim01";
-    mostrarTodos = false;
     irPara(1);
   };
 
