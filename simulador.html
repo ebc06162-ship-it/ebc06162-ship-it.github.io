@@ -1334,48 +1334,43 @@ irPara(1);
 /* Encerramento da condição Wedding Outlet 2026 — duas fases.
    1) Depois de 23h59:59 de 25/10/2026 (fuso de São Paulo), a página inteira
       dá lugar à mensagem de fim, com Instagram e WhatsApp da equipe.
-   2) Depois de 23h59:59 de 31/10/2026, a página sai do ar: só resta o aviso
-      de página não encontrada / fora do ar, sem botões nem links.
+   2) Depois de 23h59:59 de 31/10/2026, a página sai do ar e redireciona
+      para o site oficial da Emília.
    As datas são fixas no código: não dependem de servidor nem de fuso do
    aparelho além do offset -03 (Brasil não tem horário de verão).          */
 
 (function () {
   var FIM = "2026-10-25T23:59:59-03:00";  // 23h59:59 de 25/10/2026, horário de Brasília
   var FORA = "2026-11-01T00:00:00-03:00"; // 0h de 01/11/2026: página fora do ar
+  var SITE = "https://emiliabemcasados.com.br/";
   var agora = new Date();
   if (agora < new Date(FIM)) return;
+
+  if (agora >= new Date(FORA)) {
+    // Fase 2: fora do ar — redireciona para o site oficial
+    window.location.replace(SITE);
+    return;
+  }
 
   var IG = "https://www.instagram.com/emiliabemcasados/";
   var WA = "https://wa.me/551155628889?text=" + encodeURIComponent(
     "Oi! Vi a página da condição especial da Wedding Outlet e gostaria de falar com a equipe da Emília Bem-casados.");
 
-  var foraDoAr = agora >= new Date(FORA);
-
   var painel = document.createElement("div");
   painel.className = "expirado on";
-
-  if (foraDoAr) {
-    // Fase 2: página fora do ar — mensagem simples, sem botões nem links
-    painel.innerHTML =
-      '<span class="logo-inline">' + (window.LOGO_SVG || "") + "</span>" +
-      "<h2>Página não encontrada.</h2>" +
-      '<p class="exp-msg">Esta página está fora do ar e não está mais disponível.</p>';
-  } else {
-    // Fase 1: condição encerrada, mas a Emília continua no Instagram e no WhatsApp
-    painel.innerHTML =
-      '<span class="logo-inline">' + (window.LOGO_SVG || "") + "</span>" +
-      '<span class="tag-promo">Wedding Outlet 2026</span>' +
-      "<h2>A condição especial encerrou.</h2>" +
-      '<p class="exp-msg">A condição da Wedding Outlet 2026 era válida até 25 de outubro. ' +
-      "Mas fique de olho: <strong>seguindo a Emília no Instagram</strong>, você acompanha " +
-      "as próximas condições e novidades — e pode falar com a nossa equipe quando quiser.</p>" +
-      '<div class="exp-acoes">' +
-      '<a class="btn btn-primary" href="' + IG + '" target="_blank" rel="noopener">Seguir a Emília no Instagram</a>' +
-      '<a class="btn btn-outline" href="' + WA + '" target="_blank" rel="noopener">Falar com a nossa equipe</a>' +
-      "</div>" +
-      '<p class="exp-rodape">Emília Bem-casados · Há mais de 80 anos participando de momentos especiais<br>' +
-      '<a href="' + IG + '" target="_blank" rel="noopener">@emiliabemcasados</a></p>';
-  }
+  painel.innerHTML =
+    '<span class="logo-inline">' + (window.LOGO_SVG || "") + "</span>" +
+    '<span class="tag-promo">Wedding Outlet 2026</span>' +
+    "<h2>A condição especial encerrou.</h2>" +
+    '<p class="exp-msg">A condição da Wedding Outlet 2026 era válida até 25 de outubro. ' +
+    "Mas fique de olho: <strong>seguindo a Emília no Instagram</strong>, você acompanha " +
+    "as próximas condições e novidades — e pode falar com a nossa equipe quando quiser.</p>" +
+    '<div class="exp-acoes">' +
+    '<a class="btn btn-primary" href="' + IG + '" target="_blank" rel="noopener">Seguir a Emília no Instagram</a>' +
+    '<a class="btn btn-outline" href="' + WA + '" target="_blank" rel="noopener">Falar com a nossa equipe</a>' +
+    "</div>" +
+    '<p class="exp-rodape">Emília Bem-casados · Há mais de 80 anos participando de momentos especiais<br>' +
+    '<a href="' + IG + '" target="_blank" rel="noopener">@emiliabemcasados</a></p>';
 
   // cobre a página inteira e impede rolagem do conteúdo por baixo
   document.documentElement.style.overflow = "hidden";
