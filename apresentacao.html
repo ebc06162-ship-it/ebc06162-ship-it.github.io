@@ -46,23 +46,46 @@
 </main>
 <div style="text-align:center;padding-bottom:48px"><a class="voltar" href="index.html">Voltar para a condição especial</a></div>
 <script>
-/* Encerramento da condição Wedding Outlet 2026 — duas fases.
-   1) Depois de 23h59:59 de 25/10/2026 (fuso de São Paulo), a página inteira
-      dá lugar à mensagem de fim, com Instagram e WhatsApp da equipe.
-   2) Depois de 23h59:59 de 31/10/2026, a página sai do ar e redireciona
-      para o site oficial da Emília.
+/* Encerramento da condição Wedding Outlet 2026 — fases por página.
+   HOME: até 23h59:59 de 25/10 normal; de 26 a 31/10 painel "encerrou"
+   com botão para o simulador; a partir de 01/11 redireciona ao site.
+   SIMULADOR, CATÁLOGO e APRESENTAÇÃO: funcionam até 23h59:59 de 31/10
+   (decisão da Mara, 24/10: casais continuam simulando depois do evento);
+   a partir de 01/11 redirecionam ao site oficial.
+   No simulador, entre 26 e 31/10 aparece o aviso de condição exclusiva.
    As datas são fixas no código: não dependem de servidor nem de fuso do
    aparelho além do offset -03 (Brasil não tem horário de verão).          */
 
 (function () {
-  var FIM = "2026-10-25T23:59:59-03:00";  // 23h59:59 de 25/10/2026, horário de Brasília
-  var FORA = "2026-11-01T00:00:00-03:00"; // 0h de 01/11/2026: página fora do ar
+  var FIM_HOME = "2026-10-25T23:59:59-03:00";  // 23h59:59 de 25/10/2026
+  var FIM_DEMAIS = "2026-10-31T23:59:59-03:00"; // 23h59:59 de 31/10/2026
+  var FORA = "2026-11-01T00:00:00-03:00";       // 0h de 01/11/2026
   var SITE = "https://emiliabemcasados.com.br/";
   var agora = new Date();
+
+  var caminho = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  var ehHome = caminho === "" || caminho === "index.html";
+  var ehSimulador = caminho === "simulador.html";
+
+  // aviso no simulador entre 26 e 31/10: condição exclusiva
+  if (ehSimulador && agora >= new Date(FIM_HOME) && agora < new Date(FORA)) {
+    var aviso = document.createElement("div");
+    aviso.className = "aviso-pos-evento";
+    aviso.innerHTML = "Condição exclusiva para quem se cadastrou na mesa do evento · fechamento pelo WhatsApp até 31/10";
+    function montarAviso() {
+      var alvo = document.querySelector("main");
+      if (alvo) alvo.parentNode.insertBefore(aviso, alvo);
+      else document.body.appendChild(aviso);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", montarAviso);
+    else montarAviso();
+  }
+
+  var FIM = ehHome ? FIM_HOME : FIM_DEMAIS;
   if (agora < new Date(FIM)) return;
 
   if (agora >= new Date(FORA)) {
-    // Fase 2: fora do ar — redireciona para o site oficial
+    // fora do ar — redireciona para o site oficial
     window.location.replace(SITE);
     return;
   }
@@ -81,8 +104,12 @@
     "Mas fique de olho: <strong>seguindo a Emília no Instagram</strong>, você acompanha " +
     "as próximas condições e novidades — e pode falar com a nossa equipe quando quiser.</p>" +
     '<div class="exp-acoes">' +
-    '<a class="btn btn-primary" href="' + IG + '" target="_blank" rel="noopener">Seguir a Emília no Instagram</a>' +
-    '<a class="btn btn-outline" href="' + WA + '" target="_blank" rel="noopener">Falar com a nossa equipe</a>' +
+    (ehHome
+      ? '<a class="btn btn-primary" href="simulador.html">Abrir o simulador</a>' +
+        '<a class="btn btn-outline" href="' + IG + '" target="_blank" rel="noopener">Seguir a Emília no Instagram</a>' +
+        '<a class="btn btn-outline" href="' + WA + '" target="_blank" rel="noopener">Falar com a nossa equipe</a>'
+      : '<a class="btn btn-primary" href="' + IG + '" target="_blank" rel="noopener">Seguir a Emília no Instagram</a>' +
+        '<a class="btn btn-outline" href="' + WA + '" target="_blank" rel="noopener">Falar com a nossa equipe</a>') +
     "</div>" +
     '<p class="exp-rodape">Emília Bem-casados · Há mais de 80 anos participando de momentos especiais<br>' +
     '<a href="' + IG + '" target="_blank" rel="noopener">@emiliabemcasados</a></p>';
